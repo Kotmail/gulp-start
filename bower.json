@@ -1,0 +1,9 @@
+{
+  "name": "gulp-start",
+  "version": "0.0.0",
+  "description": "starting template",
+  "dependencies": {
+    "jquery": "~2.1.4",
+    "normalize-css": "~3.0.3"
+  }
+}
