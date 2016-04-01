@@ -1,6 +1,6 @@
 # Стартовый шаблон Gulp
 
-### Инструкция по установке:
+### Установка:
 
 1. git clone https://github.com/Kotmail/gulp-start project_folder
 2. cd project_folder
