@@ -12,6 +12,8 @@ var gulp = require('gulp'),
     csso = require('gulp-csso'),
     imageop = require('gulp-image-optimization'),
     sprite = require('gulp.spritesmith'),
+    svgSprite = require('gulp-svg-sprite'),
+    cheerio = require('gulp-cheerio'),
     deleting = require('del'),
     merge = require('merge-stream');
 
@@ -59,9 +61,10 @@ gulp.task('sass', function(){
  ***/
 
 gulp.task('copy', function () {
-    return gulp
-        .src('./app/fonts/**/*.{ttf,woff,eot,svg}')
-        .pipe(gulp.dest('dist/fonts'))
+    gulp.src('./app/fonts/**/*.{ttf,woff,woff2,eot,svg}')
+        .pipe(gulp.dest('dist/fonts'));
+    gulp.src('./app/images/**/svg_sprite.svg')
+        .pipe(gulp.dest('dist/images'));
 });
 
 
@@ -81,7 +84,7 @@ gulp.task('images', function(){
 
 
 /***
- * SPRITES
+ * PNG SPRITE
  ***/
 
 gulp.task('sprite', function(){
@@ -100,6 +103,39 @@ gulp.task('sprite', function(){
         .pipe(gulp.dest('./app/sass/components/'));
 
     return merge(imgStream, cssStream);
+});
+
+
+/***
+ * SVG SPRITE
+ ***/
+
+gulp.task('svgSprite', function(){
+
+    var svgSpriteOptions = {
+        mode: {
+            symbol: {
+                render: {
+                    css: false,
+                    scss: false
+                },
+                dest: '.',
+                sprite: 'svg_sprite.svg',
+                example: true
+            }
+        }
+    };
+
+    gulp.src('./app/images/svg/icons/*.svg')
+        .pipe(cheerio({
+            run: function($){
+                $('[fill]').removeAttr('fill');
+                $('[style]').removeAttr('style');
+            },
+            parserOptions: { xmlMode: true }
+        }))
+        .pipe(svgSprite(svgSpriteOptions))
+        .pipe(gulp.dest('./app/images/svg'));
 });
 
 
