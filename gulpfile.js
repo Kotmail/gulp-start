@@ -7,6 +7,7 @@ var gulp = require('gulp'),
     uglify = require('gulp-uglify'),
     cleanCSS = require('gulp-clean-css'),
     connect = require('gulp-connect'),
+    pug = require('gulp-pug'),
     sass = require('gulp-sass'),
     autoprefixer = require('gulp-autoprefixer'),
     csso = require('gulp-csso'),
@@ -17,10 +18,9 @@ var gulp = require('gulp'),
     deleting = require('del'),
     merge = require('merge-stream');
 
-
 /***
  * CONNECT
- ***/
+ */
 
 gulp.task('connect', function(){
     connect.server({
@@ -29,20 +29,26 @@ gulp.task('connect', function(){
     });
 });
 
-
 /***
- * HTML
- ***/
+ * COMPILE PUG
+ */
 
-gulp.task('html', function(){
-    gulp.src('./app/*.html')
+gulp.task('pug', function(){
+    return gulp.src('./app/pug/pages/*.pug')
+        .pipe(pug({
+            pretty: true
+        }))
+        .pipe(wiredep({
+            directory: "./app/bower_components",
+            ignorePath: '../../'
+        }))
+        .pipe(gulp.dest('./app/'))
         .pipe(connect.reload());
 });
 
-
 /***
- * SASS
- ***/
+ * COMPILE SASS
+ */
 
 gulp.task('sass', function(){
     gulp.src('./app/sass/style.scss')
@@ -55,22 +61,20 @@ gulp.task('sass', function(){
         .pipe(connect.reload());
 });
 
-
 /***
- * COPY
- ***/
+ * COPYING FILES
+ */
 
 gulp.task('copy', function () {
-    gulp.src('./app/fonts/**/*.{ttf,woff,woff2,eot,svg}')
+    gulp.src('./app/fonts/**/*.{ttf,woff,woff2,eot,otf,svg}')
         .pipe(gulp.dest('dist/fonts'));
     gulp.src('./app/images/**/svg_sprite.svg')
         .pipe(gulp.dest('dist/images'));
 });
 
-
 /***
  * IMAGES OPTIMIZATION
- ***/
+ */
 
 gulp.task('images', function(){
     gulp.src('./app/images/**/*.+(png|jpg|gif|jpeg)')
@@ -82,12 +86,11 @@ gulp.task('images', function(){
         .pipe(gulp.dest('./dist/images'));
 });
 
-
 /***
  * PNG SPRITE
- ***/
+ */
 
-gulp.task('sprite', function(){
+gulp.task('pngSprite', function(){
     var spriteData = gulp.src('./app/images/icons/*.png')
         .pipe(sprite({
             imgName: 'sprite.png',
@@ -105,10 +108,9 @@ gulp.task('sprite', function(){
     return merge(imgStream, cssStream);
 });
 
-
 /***
  * SVG SPRITE
- ***/
+ */
 
 gulp.task('svgSprite', function(){
 
@@ -138,32 +140,29 @@ gulp.task('svgSprite', function(){
         .pipe(gulp.dest('./app/images/svg'));
 });
 
-
 /***
  * CLEAN DIST
- ***/
+ */
 
 gulp.task('clean', function(){
     return deleting(['dist/']);
 });
 
-
 /***
  * BOWER
- ***/
+ */
 
 gulp.task('bower', function(){
-    gulp.src('./app/index.html')
+    gulp.src('./app/*.html')
         .pipe(wiredep({
             directory: "app/bower_components"
         }))
         .pipe(gulp.dest('./app'));
 });
 
-
 /***
- * BUILD
- ***/
+ * BUILD PROJECT
+ */
 
 gulp.task('build', ['images', 'copy'], function(){
     var assets = useref.assets();
@@ -177,20 +176,18 @@ gulp.task('build', ['images', 'copy'], function(){
         .pipe(gulp.dest('dist'));
 });
 
-
 /***
  * WATCH
- ***/
+ */
 
 gulp.task('watch', function(){
     gulp.watch('bower.json', ['bower']);
-    gulp.watch('./app/*.html', ['html']);
+    gulp.watch('./app/pug/pages/*.pug', ['pug']);
     gulp.watch('./app/sass/style.scss', ['sass']);
 });
 
-
 /***
  * DEFAULT TASK
- ***/
+ */
 
 gulp.task('default', ['clean', 'connect', 'watch']);
