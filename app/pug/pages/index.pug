@@ -1,4 +1,10 @@
 extends ../layout
 
+block title
+    title Title
+
+block beforeBody
+    - bodyClasses.push('body-class')
+
 block content
-    p loremg
+    p Lorem ipsum dolor sit...

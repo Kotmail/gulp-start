@@ -17,14 +17,16 @@ html(lang='ru')
         // build:css style.css
         link(rel='stylesheet', href='style.css')
         // endbuild
+    - var bodyClasses = [];
+    block beforeBody
 
-    body
+    body(class=bodyClasses)
         .main-container
 
             block header
                 include includes/header.pug
 
-            .content
+            .site-content
                 block content
 
             block footer
