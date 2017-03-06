@@ -25,6 +25,7 @@ var gulp = require('gulp'),
 gulp.task('connect', function(){
     connect.server({
         root: 'app',
+        port: 2585,
         livereload: true
     });
 });
@@ -54,7 +55,7 @@ gulp.task('sass', function(){
     gulp.src('./app/sass/style.scss')
         .pipe(sass().on('error', sass.logError))
         .pipe(autoprefixer({
-            browsers: ['last 2 versions']
+            browsers: ['last 5 versions']
         }))
         .pipe(csso())
         .pipe(gulp.dest('./app/'))
@@ -66,10 +67,8 @@ gulp.task('sass', function(){
  */
 
 gulp.task('copy', function () {
-    gulp.src('./app/fonts/**/*.{ttf,woff,woff2,eot,otf,svg}')
-        .pipe(gulp.dest('dist/fonts'));
-    gulp.src('./app/images/**/svg_sprite.svg')
-        .pipe(gulp.dest('dist/images'));
+    gulp.src('./app/{fonts,images}/**')
+        .pipe(gulp.dest('dist/'));
 });
 
 /***
@@ -164,15 +163,11 @@ gulp.task('bower', function(){
  * BUILD PROJECT
  */
 
-gulp.task('build', ['images', 'copy'], function(){
-    var assets = useref.assets();
-
+gulp.task('build', ['copy', 'images'], function(){
     return gulp.src('./app/*.html')
-        .pipe(assets)
+        .pipe(useref())
         .pipe(gulpif('*.js', uglify()))
         .pipe(gulpif('*.css', cleanCSS()))
-        .pipe(assets.restore())
-        .pipe(useref())
         .pipe(gulp.dest('dist'));
 });
 

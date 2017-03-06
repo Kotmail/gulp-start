@@ -9,12 +9,9 @@ html(lang='ru')
         block title
             title Starting template
 
-        // build:css css/vendor.css
+        // build:css style.css
         // bower:css
         // endbower
-        // endbuild
-
-        // build:css style.css
         link(rel='stylesheet', href='style.css')
         // endbuild
     - var bodyClasses = [];
@@ -32,11 +29,8 @@ html(lang='ru')
             block footer
                 include includes/footer.pug
 
-        // build:js js/vendor.js
+        // build:js js/main.js
         // bower:js
         // endbower
-        // endbuild
-
-        // build:js js/main.js
         script(src='js/main.js')
         // endbuild
