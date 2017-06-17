@@ -16,7 +16,8 @@ var gulp = require('gulp'),
     svgSprite = require('gulp-svg-sprite'),
     cheerio = require('gulp-cheerio'),
     deleting = require('del'),
-    merge = require('merge-stream');
+    merge = require('merge-stream'),
+    combineMq = require('gulp-combine-mq');
 
 /***
  * CONNECT
@@ -52,12 +53,15 @@ gulp.task('pug', function(){
  */
 
 gulp.task('sass', function(){
-    gulp.src('./app/sass/style.scss')
+    gulp.src('./app/sass/*.scss')
         .pipe(sass().on('error', sass.logError))
         .pipe(autoprefixer({
             browsers: ['last 5 versions']
         }))
         .pipe(csso())
+        .pipe(combineMq({
+            beautify: false
+        }))
         .pipe(gulp.dest('./app/'))
         .pipe(connect.reload());
 });
@@ -177,8 +181,8 @@ gulp.task('build', ['copy', 'images'], function(){
 
 gulp.task('watch', function(){
     gulp.watch('bower.json', ['bower']);
-    gulp.watch('./app/pug/pages/*.pug', ['pug']);
-    gulp.watch('./app/sass/style.scss', ['sass']);
+    gulp.watch('./app/pug/**/*.pug', ['pug']);
+    gulp.watch('./app/sass/**/*.scss', ['sass']);
 });
 
 /***

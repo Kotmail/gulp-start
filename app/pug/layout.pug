@@ -1,3 +1,6 @@
+include blocks/_header
+include blocks/_footer
+
 doctype html
 html(lang='ru')
     head
@@ -14,20 +17,19 @@ html(lang='ru')
         // endbower
         link(rel='stylesheet', href='style.css')
         // endbuild
-    - var bodyClasses = [];
+    - var bodyClasses = ['main-container'];
     block beforeBody
 
     body(class=bodyClasses)
-        .main-container
+        
+        block header
+            +header()
 
-            block header
-                include includes/header.pug
+        .main-container__content
+            block content
 
-            .site-content
-                block content
-
-            block footer
-                include includes/footer.pug
+        block footer
+            +footer()
 
         // build:js js/main.js
         // bower:js
